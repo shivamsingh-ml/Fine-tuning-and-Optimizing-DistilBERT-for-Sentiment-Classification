@@ -2,6 +2,10 @@
 
 This project explores the fine-tuning of [DistilBERT](https://huggingface.co/distilbert-base-uncased) on the SST-2 dataset for sentiment classification. It evaluates multiple classifier head architectures, fine-tuning techniques, and introduces infrastructure to support future integration of PEFT (e.g., LoRA, adapters).
 
+**SST-2 (Stanford Sentiment Treebank v2)** is a binary sentiment classification dataset built from movie review phrases. It provides high-quality, phrase-level annotations that are ideal for benchmarking sentiment analysis.
+
+**DistilBERT** is a distilled (compressed) version of BERT that retains 97% of language understanding capabilities while being 40% smaller and 60% faster. It is pretrained using knowledge distillation and is well-suited for downstream NLP tasks with limited compute resources.
+
 ---
 
 ## 📂 Project Structure
@@ -68,30 +72,36 @@ Each run will save a `results.txt` in the specified `output_dir`, and optionally
 
 ## 📊 Experiment Results
 
-| Experiment | Head Type | Hidden Layers       | Activation | Dropout | PEFT    | Trainable Params (%) | Validation Accuracy | Test Accuracy* | Notes                                |
-|------------|-----------|---------------------|------------|---------|---------|-----------------------|---------------------|----------------|--------------------------------------|
-| Baseline   | HF Linear | None                | None       | None    | None    | 100%                  | 91.51%              | 92.60%         | HuggingFace pretrained head          |
-| A          | MLP       | [256]               | ReLU       | 0.1     | None    | 100%                  |                     |                | Light MLP head                       |
-| B          | MLP       | [512, 256]          | GELU       | 0.2     | None    | 100%                  | 91.16%              |                | Deeper head                          |
-| C          | MLP       | [512, 512, 256]     | SiLU       | 0.2     | None    | 100%                  |                     |                | Very deep MLP                        |
-| D          | MLP       | [768]               | ReLU       | 0.3     | None    | 100%                  |                     |                | Wide single layer                    |
-| E          | MLP       | [1024, 512, 256]    | GELU       | 0.2     | None    | 100%                  |                     |                | Wide and deep, possible overfit      |
-| F          | MLP       | [256]               | SiLU       | 0.1     | None    | 100%                  |                     |                | Shallow, modern activation           |
-| G          | MLP       | [512, 256, 128]     | GELU       | 0.15    | None    | 100%                  |                     |                | Progressive bottleneck               |
-| PEFT-A     | Linear    | None                | None       | 0.1     | LoRA    | ~20%                  |                     |                | PEFT w/ LoRA on baseline             |
-| PEFT-B     | MLP       | [256]               | GELU       | 0.1     | Adapter | ~15%                  |                     |                | Adapter-based fine-tuning            |
+| Experiment | Head Type | Hidden Layers       | Activation | Dropout | Trainable Params (%) | Validation Accuracy | Test Accuracy* |
+|------------|-----------|---------------------|------------|---------|-----------------------|---------------------|----------------|
+| Baseline   | HF Linear | None                | None       | None    | 100%                  | 91.51%              | 92.60%         |
+| A          | MLP       | [256]               | ReLU       | 0.1     | 100%                  | 91.06%              |    -           |
+| B          | MLP       | [512, 256]          | GELU       | 0.2     | 100%                  | 91.51%              |    -           |
+| C          | MLP       | [512, 512, 256]     | SiLU       | 0.2     | 100%                  | 90.94%              |    -           |
+| D          | MLP       | [768]               | ReLU       | 0.3     | 100%                  | 90.94%              |    -           |
+| E          | MLP       | [1024, 512, 256]    | GELU       | 0.2     | 100%                  | 90.83%              |    -           |
+| F          | MLP       | [256]               | SiLU       | 0.1     | 100%                  | 91.28%              |    -           |
+| G          | MLP       | [512, 256, 128]     | GELU       | 0.15    | 100%                  | 90.71%              |    -           |
 
 > *Test accuracy is reported via submission to the official [GLUE evaluation server](https://gluebenchmark.com/).
+
+---
+
+## 📒 Experiment Overview
+
+- **Baseline**: Uses Hugging Face's built-in linear head without any architectural modifications. Serves as the control for comparison.
+- **Exp A**: Lightweight MLP with a single 256-unit hidden layer and ReLU activation. Tests minimal non-linearity.
+- **Exp B**: Deeper head with two layers and GELU activation, investigating performance from added depth.
+- **Exp C**: Very deep MLP with SiLU activation, aimed at capturing complex non-linearities.
+- **Exp D**: Wide single-layer model with increased dropout to test regularization in larger capacity heads.
+- **Exp E**: Very wide and deep head; useful for examining overfitting behavior on small datasets.
+- **Exp F**: Modern shallow configuration with SiLU; combines simplicity with advanced activation.
+- **Exp G**: Deep head with progressive bottleneck structure, common in deep residual networks.
 
 ---
 
 ## 📊 Future Plans
 
 - Integrate PEFT methods (LoRA, QLoRA, Adapters)
-- Add results aggregation script for summary.csv generation
 - Extend to GLUE/SuperGLUE tasks beyond SST-2
 - Improve tokenizer flexibility & model checkpointing
-```
-
-Let me know if you'd like this exported to `.md` or if you want a `requirements.txt` template added as well.
-
