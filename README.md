@@ -100,8 +100,36 @@ Each run will save a `results.txt` in the specified `output_dir`, and optionally
 
 ---
 
+## 🧠 PEFT vs Full Fine-tuning Comparison
+
+In addition to full fine-tuning experiments, Parameter-Efficient Fine-Tuning (PEFT) methods are explored for improving efficiency while maintaining competitive performance. The table below summarizes their comparison with the baseline full fine-tuning approach.
+
+| Method | Trainable Params (%) | Validation Accuracy | Test Accuracy* |
+|--------|----------------------|---------------------|----------------|
+| Full Fine-tuning (Baseline) | 100% | 91.51% | 92.60% |
+| LoRA | ~1.8% | (to fill) | (to fill) |
+| QLoRA (Planned) | ~0.3% | (to fill) | (to fill) |
+| Adapters (Planned) | ~1–3% | (to fill) | (to fill) |
+
+> *Test accuracy is reported via submission to the official [GLUE evaluation server](https://gluebenchmark.com/).
+
+---
+
+### 📒 PEFT Method Overview
+
+- **Full Fine-tuning (Baseline)**:  
+  The entire DistilBERT model was fine-tuned along with the classification head. This serves as the control and reference point for PEFT methods.
+
+- **LoRA**:  
+  Low-Rank Adapters were added to key transformer layers (`q_lin`, `k_lin`, `v_lin`, `out_lin`, `lin1`, `lin2`). Only ~1.8% of total parameters were trainable, offering significant savings in memory and computation while achieving near full fine-tuning performance.
+
+- **QLoRA (Planned)**:  
+  Combines 4-bit quantization with LoRA adapters. Expected to offer even lower memory usage while maintaining LoRA's efficiency. Will be explored in upcoming experiments.
+
+- **Adapters (Planned)**:  
+  Lightweight adapters inserted into transformer layers as an alternative PEFT approach. They allow selective fine-tuning with small trainable modules and are often used for rapid adaptation across tasks.
+
 ## 📊 Future Plans
 
-- Integrate PEFT methods (LoRA, QLoRA, Adapters)
 - Extend to GLUE/SuperGLUE tasks beyond SST-2
 - Improve tokenizer flexibility & model checkpointing
