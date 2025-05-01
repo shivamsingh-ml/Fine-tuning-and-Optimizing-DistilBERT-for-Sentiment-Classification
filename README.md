@@ -16,6 +16,10 @@ This project explores the fine-tuning of [DistilBERT](https://huggingface.co/dis
 ├── config/                  # YAML configs for each experiment
 ├── experiments/
 │   └── run_experiment.py   # Main training script
+├── notebooks/
+│   ├── PEFT_QLORA.ipynb                    
+│   ├── PEFT_LORA.ipynb                     
+│   └── DOMAIN_ADAPTATION_IMDB.ipynb        
 ├── src/
 │   ├── data.py             # Tokenization and dataset loading
 │   ├── utils.py            # Seeding, metrics
