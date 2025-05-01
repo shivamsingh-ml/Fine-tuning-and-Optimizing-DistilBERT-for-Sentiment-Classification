@@ -87,7 +87,11 @@ def main():
         f.write(f"Validation Accuracy: {val_acc:.4f}\n")
         f.write("Config used:\n")
         yaml.dump(config, f)
+    save_dir = os.path.join(config["training"]["output_dir"], "final_model")
+    model.model.save_pretrained(save_dir)
+    tokenizer.save_pretrained(save_dir)
 
+    print(f"Model and tokenizer saved to {save_dir}")
 
 if __name__ == "__main__":
     main()
